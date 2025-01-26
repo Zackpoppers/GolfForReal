@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -8,12 +10,10 @@ public class Card : MonoBehaviour
     public bool isFaceUp = true;
 
     private TextMeshPro textComponent;
-    private PlayerManager playerManager;
 
     private void Awake()
     {
         textComponent = GetComponentInChildren<TextMeshPro>();
-        playerManager = FindObjectOfType<PlayerManager>();
         UpdateCardVisual();
     }
 
@@ -22,6 +22,7 @@ public class Card : MonoBehaviour
         value = cardValue;
         suit = cardSuit;
         isFaceUp = true;
+        textComponent.gameObject.SetActive(isFaceUp);
         UpdateCardVisual();
     }
 
@@ -31,22 +32,36 @@ public class Card : MonoBehaviour
         {
             string valueText = value switch
             {
-                1 => "A",
-                11 => "J",
-                12 => "Q",
-                13 => "K",
+                0 => "Joker",
+                1 => "Ace",
+                11 => "Jack",
+                12 => "Queen",
+                13 => "King",
                 _ => value.ToString()
             };
 
-            textComponent.text = isFaceUp ? $"{valueText} {suit[0]}" : "";
+            textComponent.text = isFaceUp ? $"{valueText}\n{suit[0]}{suit[1]}{suit[2]}" : "";
         }
+    }
+
+    public void Flip()
+    {
+        isFaceUp = !isFaceUp;
+        textComponent.gameObject.SetActive(isFaceUp);
     }
 
     public void OnClick()
     {
-        if (playerManager != null)
+        GameObject parent = gameObject.transform.parent.gameObject;
+
+        Debug.Log($"{gameObject.name} clicked on {parent.name}");
+        if (parent.name.Contains("Player"))
         {
-            playerManager.OnCardClicked(this);
+            PlayerManager playerManager = parent.GetComponent<PlayerManager>();
+            if (playerManager != null)
+            {
+                playerManager.OnCardClicked(this);
+            }
         }
     }
 }

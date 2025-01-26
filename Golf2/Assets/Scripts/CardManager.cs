@@ -5,28 +5,17 @@ public class CardManager : MonoBehaviour
 {
     public GameObject cardPrefab;
     public Transform deckTransform;
+    public Transform inDeckCardsParent; // Parent for the cards when their in the deck
+    public Transform discardedCardsParent; // Parent for the cards when their in the discard pile
     public Transform discardTransform;
 
-    private List<Card> deck = new List<Card>();
+    public List<Card> deck = new List<Card>();
     private List<Card> discardPile = new List<Card>();
-    public Card drawnCard;
 
     private void Awake()
     {
         InitializeDeck();
         ShuffleDeck();
-        UpdateVisuals();
-    }
-
-    public void DrawCardFromDeck()
-    {
-        if (deck.Count == 0 || drawnCard != null) return;
-
-        drawnCard = DrawCard();
-        if (drawnCard != null)
-        {
-            drawnCard.transform.position = new Vector3(0, -4, 0);
-        }
     }
 
     private void InitializeDeck()
@@ -39,14 +28,56 @@ public class CardManager : MonoBehaviour
             {
                 GameObject newCardObj = Instantiate(cardPrefab, deckTransform.position, Quaternion.identity);
                 Card newCard = newCardObj.GetComponent<Card>();
-
                 if (newCard != null)
                 {
+                    newCardObj.name = $"{CardValueToString(value)} of {suit}";
+                    newCardObj.transform.SetParent(inDeckCardsParent);
                     newCard.SetCard(value, suit);
                     deck.Add(newCard);
                     newCardObj.SetActive(false);
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// Changes the card value to its string format (11 -> "Jack", 12 -> "Queen")
+    /// </summary>
+    /// <param name="value">Int value of card you want the string for</param>
+    private string CardValueToString(int value)
+    {
+        switch (value)
+        {
+            case 0:
+                return "Joker";
+            case 1:
+                return "One";
+            case 2:
+                return "Two";
+            case 3:
+                return "Three";
+            case 4:
+                return "Four";
+            case 5:
+                return "Five";
+            case 6:
+                return "Six";
+            case 7:
+                return "Seven";
+            case 8:
+                return "Eight";
+            case 9:
+                return "Nine";
+            case 10:
+                return "Ten";
+            case 11:
+                return "Jack";
+            case 12:
+                return "Queen";
+            case 13:
+                return "King";
+            default:
+                return null;
         }
     }
 
@@ -61,29 +92,43 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    public Card DrawCard()
+    public void DrawAndDiscardCard()
     {
-        if (deck.Count == 0) return null;
+        if (deck.Count == 0)
+        {
+            deckTransform.gameObject.SetActive(false);
+            return;
+        }
 
         Card drawnCard = deck[0];
         deck.RemoveAt(0);
-        drawnCard.gameObject.SetActive(true);
-        UpdateVisuals();
-        return drawnCard;
+        DiscardCard(drawnCard);
     }
 
     public void DiscardCard(Card card)
     {
+        if (card == null) return;
         discardPile.Add(card);
 
-        foreach (var discarded in discardPile)
+        // Make sure each discarded card is inactive except for the last and most recent
+        foreach (Card discardCard in discardPile)
         {
-            discarded.gameObject.SetActive(false);
+            discardCard.gameObject.SetActive(false);
         }
-
-        card.transform.position = discardTransform.position;
         card.gameObject.SetActive(true);
+
+        card.transform.SetParent(discardedCardsParent); // Set the parent of the card to the discard pile
+        card.transform.position = discardTransform.position; // Place it where the discard pile is
         UpdateVisuals();
+    }
+    public Card TakeTopCard()
+    {
+        if (discardPile.Count == 0) return null;
+
+        Card topCard = discardPile[^1];
+        discardPile.RemoveAt(discardPile.Count - 1);
+        UpdateVisuals();
+        return topCard;
     }
 
     private void UpdateVisuals()
@@ -96,6 +141,17 @@ public class CardManager : MonoBehaviour
         if (discardTransform.GetComponent<SpriteRenderer>() != null)
         {
             discardTransform.GetComponent<SpriteRenderer>().enabled = discardPile.Count > 0;
+            if (discardPile.Count > 0)
+            {
+                for (int i = 0; i < discardPile.Count - 1; i++)
+                {
+                    discardPile[i].gameObject.SetActive(false);
+                }
+
+                discardPile[discardPile.Count - 1].gameObject.SetActive(true);
+            }
+
         }
+
     }
 }
