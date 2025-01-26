@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
 
     private CardManager cardManager;
 
+    public int currentPlayerTurn;
+
     void Start()
     {
         cardManager = GameObject.FindGameObjectWithTag("CardManager").GetComponent<CardManager>();
