@@ -96,9 +96,11 @@ public class CardManager : MonoBehaviour
     {
         if (deck.Count == 0)
         {
-            deckTransform.gameObject.SetActive(false);
+            Debug.Log("No cards in the deck to draw!");
             return;
         }
+        else if (deck.Count == 1) deckTransform.gameObject.SetActive(false);
+
 
         Card drawnCard = deck[0];
         deck.RemoveAt(0);
@@ -110,22 +112,17 @@ public class CardManager : MonoBehaviour
         if (card == null) return;
         discardPile.Add(card);
 
-        // Make sure each discarded card is inactive except for the last and most recent
-        foreach (Card discardCard in discardPile)
-        {
-            discardCard.gameObject.SetActive(false);
-        }
-        card.gameObject.SetActive(true);
-
         card.transform.SetParent(discardedCardsParent); // Set the parent of the card to the discard pile
         card.transform.position = discardTransform.position; // Place it where the discard pile is
+        card.transform.rotation = Quaternion.identity;
         UpdateVisuals();
     }
+
     public Card TakeTopCard()
     {
         if (discardPile.Count == 0) return null;
 
-        Card topCard = discardPile[^1];
+        Card topCard = discardPile[discardPile.Count - 1];
         discardPile.RemoveAt(discardPile.Count - 1);
         UpdateVisuals();
         return topCard;
@@ -133,7 +130,16 @@ public class CardManager : MonoBehaviour
 
     private void UpdateVisuals()
     {
-        if (deckTransform.GetComponent<SpriteRenderer>() != null)
+        if (discardPile.Count > 0)
+        {
+            for (int i = 0; i < discardPile.Count - 1; i++)
+            {
+                discardPile[i].gameObject.SetActive(false);
+            }
+
+            discardPile[discardPile.Count - 1].gameObject.SetActive(true);
+        }
+/*        if (deckTransform.GetComponent<SpriteRenderer>() != null)
         {
             deckTransform.GetComponent<SpriteRenderer>().enabled = deck.Count > 0;
         }
@@ -141,17 +147,9 @@ public class CardManager : MonoBehaviour
         if (discardTransform.GetComponent<SpriteRenderer>() != null)
         {
             discardTransform.GetComponent<SpriteRenderer>().enabled = discardPile.Count > 0;
-            if (discardPile.Count > 0)
-            {
-                for (int i = 0; i < discardPile.Count - 1; i++)
-                {
-                    discardPile[i].gameObject.SetActive(false);
-                }
+            
 
-                discardPile[discardPile.Count - 1].gameObject.SetActive(true);
-            }
-
-        }
+        }*/
 
     }
 }

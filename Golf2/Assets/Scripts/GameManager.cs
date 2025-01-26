@@ -6,9 +6,13 @@ public class GameManager : MonoBehaviour
     public GameObject playerPrefab;
     public Transform playerParent;
 
-    void Awake()
+    private CardManager cardManager;
+
+    void Start()
     {
+        cardManager = GameObject.FindGameObjectWithTag("CardManager").GetComponent<CardManager>();
         GeneratePlayers(4);
+        cardManager.DrawAndDiscardCard();
     }
 
     public void GeneratePlayers(int amount)

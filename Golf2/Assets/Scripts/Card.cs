@@ -52,7 +52,7 @@ public class Card : MonoBehaviour
 
     public void OnClick()
     {
-        GameObject parent = gameObject.transform.parent.gameObject;
+        GameObject parent = gameObject.transform.parent.parent.gameObject; // parent -> canvas, parent of parent -> player
 
         Debug.Log($"{gameObject.name} clicked on {parent.name}");
         if (parent.name.Contains("Player"))

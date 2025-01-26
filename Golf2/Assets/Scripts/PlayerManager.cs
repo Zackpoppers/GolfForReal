@@ -28,7 +28,7 @@ public class PlayerManager : MonoBehaviour
             Card drawnCard = cardManager.TakeTopCard(); // Gets top card in discard pile
             if (drawnCard != null)
             {
-                drawnCard.transform.SetParent(gameObject.transform);
+                drawnCard.transform.SetParent(gameObject.transform.GetChild(0).transform);
                 drawnCard.gameObject.SetActive(true);
                 playerHand.Add(drawnCard);
 
@@ -65,7 +65,7 @@ public class PlayerManager : MonoBehaviour
         playerHand[index] = newCard;
 
         newCard.transform.position = oldCard.transform.position;
-        newCard.gameObject.SetActive(true);
+        newCard.transform.SetParent(gameObject.transform.GetChild(0)); // Set card to the CANVAS of the player object
 
         cardManager.DiscardCard(oldCard);
         oldCard.gameObject.transform.rotation = Quaternion.identity;
