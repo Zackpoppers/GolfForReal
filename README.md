@@ -37,12 +37,3 @@ this is a digitalized versions of a card game called golf
 - Load unziped project in Unity Editor
 - Click Play
 
-
-### Methods
-
-| Name        | Type            | Description  |
-| ------------- |-------------  | -------------|
-| createDeck      | void        | Create the deck containing all 52 cards. |
-| shuffleDeck     | void        | Shuffle the deck.                     |
-| selectPlayers   | number      | Select amount of players by providing a number as argument. |
-| dealCards       | void        | Deal the cards. 52 cards / number of players.
