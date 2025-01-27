@@ -301,6 +301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardPrefab: {fileID: 6787268818870426942, guid: 22c461b53c6c8c241a685913472470a6, type: 3}
+  gameManager: {fileID: 0}
   deckAndDiscardPile: {fileID: 1795915669}
   deckImage: {fileID: 1768127820}
   inDeckCardsParent: {fileID: 741344166}
@@ -1157,8 +1158,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 433994032}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
-        m_MethodName: DrawAndDiscardCard
-        m_Mode: 6
+        m_MethodName: OnDeckClick
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1730,7 +1731,8 @@ MonoBehaviour:
   playerPrefab: {fileID: 8223568495148352218, guid: 3201bc83392389f448086984aa3f24ac, type: 3}
   playerParent: {fileID: 460235649}
   currentPlayerTurn: 0
-  camera: {fileID: 210347507}
+  globalTurnCount: 0
+  cameraObject: {fileID: 210347507}
   deckAndDiscardPileParent: {fileID: 1795915668}
   rotating: 0
   switchingCards: 0
