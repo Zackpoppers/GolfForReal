@@ -1,8 +1,10 @@
 using System;
 using System.Linq;
 using TMPro;
+using UnityEngine.EventSystems;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class Card : MonoBehaviour
 {
@@ -20,17 +22,11 @@ public class Card : MonoBehaviour
         suit = cardSuit;
         faceSprite = newFaceSprite;
         backSprite = newBackSprite;
-        isFaceUp = true;
+        isFaceUp = false;
         UpdateCardVisual();
     }
 
-    private void UpdateCardVisual()
-    {
-        if (cardImage != null)
-        {
-            cardImage.sprite = isFaceUp ? faceSprite : backSprite;
-        }
-    }
+    private void UpdateCardVisual() => cardImage.sprite = isFaceUp ? faceSprite : backSprite;
 
     public void Flip()
     {
@@ -38,12 +34,17 @@ public class Card : MonoBehaviour
         UpdateCardVisual();
     }
 
+    public void SetFacingUp(bool facingUp)
+    {
+        isFaceUp = facingUp;
+        UpdateCardVisual();
+    }
+
     public void OnClick()
     {
-        GameObject parent = gameObject.transform.parent.parent.gameObject; // parent -> canvas, parent of parent -> player
-
+        GameObject parent = gameObject.transform.parent.parent.gameObject;
         Debug.Log($"{gameObject.name} clicked on {parent.name}");
-        if (parent.name.Contains("Player"))
+        if (AttachedToPlayer())
         {
             PlayerManager playerManager = parent.GetComponent<PlayerManager>();
             if (playerManager != null)
@@ -52,4 +53,36 @@ public class Card : MonoBehaviour
             }
         }
     }
+
+    public void OnRightClick(BaseEventData data)
+    {
+        PointerEventData pointerData = data as PointerEventData;
+        if (pointerData.button != PointerEventData.InputButton.Right) return; // Return if it's not right click
+
+        GameObject parent = gameObject.transform.parent.parent.gameObject;
+        Debug.Log($"{gameObject.name} left clicked on {parent.name}");
+        if (AttachedToPlayer())
+        {
+            PlayerManager playerManager = parent.GetComponent<PlayerManager>();
+            if (playerManager != null)
+            {
+                playerManager.OnCardClicked(this, true);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Checks if the card is in a player's hand
+    /// </summary>
+    /// <returns>If the card is in a player's hand</returns>
+    private bool AttachedToPlayer()
+    {
+        GameObject parent = gameObject.transform.parent.parent.gameObject; // parent -> canvas, parent of parent -> player
+        return parent.name.Contains("Player");
+    }
+
+
+
+
+
 }
