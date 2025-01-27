@@ -139,6 +139,7 @@ public class CardManager : MonoBehaviour
 
     public void OnDeckClick()
     {
+        if (gameManager.rotating) return;
         DrawAndDiscardCard(animate:true, playerClicked:true);
     }
 
