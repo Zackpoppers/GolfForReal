@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
+using UnityEditor.Toolbars;
 
 public class GameManager : MonoBehaviour
 {
@@ -29,7 +30,11 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        playerCount = 4;
+        /*        Settings settings = GameObject.FindGameObjectWithTag("Settings").GetComponent<Settings>();
+                playerCount = settings.playerCount;*/
+        // For ben :) ^^^^
+
+        playerCount = 3;
         cardManager = GameObject.FindGameObjectWithTag("CardManager").GetComponent<CardManager>();
         GeneratePlayers(playerCount);
         cardManager.DrawAndDiscardCard();
@@ -154,7 +159,11 @@ public class GameManager : MonoBehaviour
     {
         rotating = true;
         // The target rotation angle for the camera and the pile
-        int targetRotation = (int)cameraObject.transform.rotation.eulerAngles.z + 90;
+        int targetRotation = (currentPlayerTurn * 90);
+        if (playerCount == 4)
+        {
+            targetRotation = (int)cameraObject.transform.rotation.eulerAngles.z + 90;
+        }
 
         // Start from the current rotation angles
         float startCameraRotation = cameraObject.transform.rotation.eulerAngles.z;

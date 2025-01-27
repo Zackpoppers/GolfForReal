@@ -22,7 +22,9 @@ public class PlayerManager : MonoBehaviour
         // Pick two random cards to start face-up (will be flipped after the first turn)
         System.Random random = new System.Random();
         randomStartingFaceUpCardIndex1 = random.Next(0, 5);
-        randomStartingFaceUpCardIndex2 = (random.Next(0, 4) + randomStartingFaceUpCardIndex1) % 6;
+        randomStartingFaceUpCardIndex2 = randomStartingFaceUpCardIndex1;
+        while (randomStartingFaceUpCardIndex2 == randomStartingFaceUpCardIndex1) randomStartingFaceUpCardIndex2 = random.Next(0, 5);
+
         playerHand[randomStartingFaceUpCardIndex1].SetFacingUp(true);
         playerHand[randomStartingFaceUpCardIndex2].SetFacingUp(true);
     }
@@ -71,6 +73,7 @@ public class PlayerManager : MonoBehaviour
 
         bool firstRound = gameManager.globalTurnCount == 0;
         bool coroutineRunning = gameManager.rotating || gameManager.switchingCards;
+        int cardIndex = playerHand.IndexOf(clickedCard);
 
         if (playerHand.Contains(clickedCard) && // Player has the card
             gameManager.currentPlayerTurn == GetPlayerNumber() - 1 && // Has to be this players turn
@@ -88,8 +91,8 @@ public class PlayerManager : MonoBehaviour
         // Flip over the 2 random starting cards
         if (firstRound)
         {
-            if (playerHand.IndexOf(clickedCard) != randomStartingFaceUpCardIndex1) playerHand[randomStartingFaceUpCardIndex1].SetFacingUp(false);
-            if (playerHand.IndexOf(clickedCard) != randomStartingFaceUpCardIndex2) playerHand[randomStartingFaceUpCardIndex2].SetFacingUp(false);
+            if (cardIndex != randomStartingFaceUpCardIndex1) playerHand[randomStartingFaceUpCardIndex1].SetFacingUp(false);
+            if (cardIndex != randomStartingFaceUpCardIndex2) playerHand[randomStartingFaceUpCardIndex2].SetFacingUp(false);
         }
 
 
