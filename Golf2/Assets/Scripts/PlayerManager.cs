@@ -102,4 +102,31 @@ public class PlayerManager : MonoBehaviour
         String playerNumberString = gameObject.name.Split("Player")[1];
         return int.Parse(playerNumberString);
     }
+
+    public int CalculateScore()
+    {
+        int score = 0;
+
+        for (int i = 0; i < playerHand.Count; i++)
+        {
+            Card card = playerHand[i];
+
+            if (card.value <= 2) // Ace or two
+            {
+                score -= card.value;
+                continue;
+            }
+            else if (card.value == 13) continue; // King
+
+            if (i != 0 && i != 3 && playerHand[i - 1].value == card.value) continue; // Matching card to left
+            if (i != 2 && i != 5 && playerHand[i + 1].value == card.value) continue; // Matching card to right
+            if (i <= 2 && playerHand[i + 3].value == card.value) continue; // Matching card above
+            if (i >= 3 && playerHand[i - 3].value == card.value) continue; // Matching card below
+
+            score += card.value >= 10 ? 10 : card.value;
+
+        }
+
+        return score;
+    }
 }

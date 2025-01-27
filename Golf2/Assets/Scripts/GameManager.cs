@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class GameManager : MonoBehaviour
     public bool rotating = false;
 
     public GameObject endGameScreen;
+    public TextMeshProUGUI scoreText;
     public bool gameOver = false;
 
     private float cameraRotateDuration = 0.75f;
@@ -107,6 +109,14 @@ public class GameManager : MonoBehaviour
     private void EndGame()
     {
         gameOver = true;
+
+        string scoreString = "";
+        for (int i = 0; i < playerManagers.Length; i++)
+        {
+            string formattedPlayerScore = $"Player {i + 1} score: {playerManagers[i].CalculateScore()}";
+            scoreString += $"{formattedPlayerScore}\n";
+        }
+        scoreText.text = scoreString;
         endGameScreen.SetActive(true);
         deckAndDiscardPileParent.SetActive(false);
     }
