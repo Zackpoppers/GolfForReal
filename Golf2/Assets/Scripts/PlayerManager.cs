@@ -28,6 +28,7 @@ public class PlayerManager : MonoBehaviour
         {
             cardManager.DrawAndDiscardCard();
             Card drawnCard = cardManager.TakeTopCard(); // Gets top card in discard pile
+            drawnCard.SetFacingUp(false);
             if (drawnCard != null)
             {
                 drawnCard.transform.SetParent(gameObject.transform.GetChild(0).transform);
@@ -47,11 +48,21 @@ public class PlayerManager : MonoBehaviour
 
     }
 
-    public void OnCardClicked(Card clickedCard)
+    public void OnCardClicked(Card clickedCard, bool rightClick = false)
     {
-        if (playerHand.Contains(clickedCard) && gameManager.currentPlayerTurn == GetPlayerNumber() - 1)
+        if (gameManager.gameOver) return;
+
+        if (playerHand.Contains(clickedCard) && // Player has the card
+            gameManager.currentPlayerTurn == GetPlayerNumber() - 1 && // Has to be this players turn
+            !gameManager.rotating && // Board cannot be in the middle of rotating
+            !clickedCard.isFaceUp) // AND card has to be face-down
+            
         {
-            ReplaceCard(clickedCard);
+
+            EnlargeCards(false);
+            if (rightClick) clickedCard.SetFacingUp(true);
+            else ReplaceCard(clickedCard);
+
             gameManager.NextTurn();
         }
     }
@@ -65,11 +76,21 @@ public class PlayerManager : MonoBehaviour
         if (newCard == null) return;
 
         playerHand[index] = newCard;
+        cardManager.discardSwitchedWithCardInHand = true;
         newCard.transform.position = oldCard.transform.position;
         newCard.transform.rotation = oldCard.transform.rotation;
+        newCard.transform.localScale = oldCard.transform.localScale;
         newCard.transform.SetParent(gameObject.transform.GetChild(0)); // Set card to the CANVAS of the player object
 
+
         cardManager.DiscardCard(oldCard);
+    }
+
+
+    public void EnlargeCards(bool enlarge)
+    {
+        Vector3 scalingVector = enlarge ? new Vector3(1.2f, 1.2f, 1.2f) : Vector3.one;
+        gameObject.transform.localScale = scalingVector;
     }
 
     /// <summary>

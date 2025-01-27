@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal.Internal;
 using UnityEngine.UI;
 
 public class CardManager : MonoBehaviour
@@ -12,12 +13,15 @@ public class CardManager : MonoBehaviour
     public Transform discardTransform;
 
     public bool deckCardDrawn = false;
+    public bool discardSwitchedWithCardInHand = false;
 
     public List<Card> deck = new List<Card>();
     private List<Card> discardPile = new List<Card>();
 
-    public List<Sprite> cardSprites;
     public Sprite cardBackSprite;
+
+    private Vector3 discardPileSize = new Vector3(1.4f, 1.96f, 1f);
+    private Vector3 cardInHandSize = new Vector3(1.25f, 1.75f, 1f);
 
     private void Awake()
     {
@@ -27,7 +31,7 @@ public class CardManager : MonoBehaviour
 
     private void InitializeDeck()
     {
-        string[] suits = { "clubs", "diamonds", "hearts", "spades" };
+        string[] suits = {"clubs", "diamonds", "hearts", "spades"};
 
         for (int value = 2; value <= 14; value++)
         {
@@ -42,10 +46,7 @@ public class CardManager : MonoBehaviour
                     newCardObj.transform.SetParent(inDeckCardsParent);
 
                     // setting card with sprite
-                    int spriteIndex = GetSpriteIndex(value, suit);
-                    Sprite faceSprite = (spriteIndex >= 0 && spriteIndex < cardSprites.Count)
-                        ? cardSprites[spriteIndex]
-                        : null;
+                    Sprite faceSprite = GetCardSprite(ValueToString(value), suit);
 
                     newCard.SetCard(NormalizeValue(value), suit, faceSprite, cardBackSprite);
 
@@ -71,10 +72,11 @@ public class CardManager : MonoBehaviour
     private string ValueToString(int val)
     {
         if (val >= 2 && val <= 10) return val.ToString();
-        if (val == 11) return "Jack";
-        if (val == 12) return "Queen";
-        if (val == 13) return "King";
-        if (val == 1 || val == 14) return "Ace";
+        else if (val == 11) return "Jack";
+        else if (val == 12) return "Queen";
+        else if (val == 13) return "King";
+        else if (val == 1 || val == 14) return "Ace";
+        else if (val == 0) return "Joker";
         return null;
     }
 
@@ -148,19 +150,20 @@ public class CardManager : MonoBehaviour
         }
         else
         {
-            SetDeckDrawable(playerClicked);
+            SetDeckDrawable(!playerClicked);
         }
 
 
         Card drawnCard = deck[0];
         deck.RemoveAt(0);
+        drawnCard.SetFacingUp(true);
         DiscardCard(drawnCard);
     }
 
     public void SetDeckDrawable(bool canDrawCard)
     {
-        deckCardDrawn = canDrawCard;
-        deckImage.color = new Color(1, 1, 1, deckCardDrawn ? 0.3f : 1.0f);
+        deckCardDrawn = !canDrawCard;
+        deckImage.color = new Color(1, 1, 1, deckCardDrawn ? 0.3f : 1f);
     }
 
     public void DiscardCard(Card card)
@@ -171,6 +174,8 @@ public class CardManager : MonoBehaviour
         card.transform.SetParent(discardedCardsParent); // Set the parent of the card to the discard pile
         card.transform.position = discardTransform.position; // Place it where the discard pile is
         card.transform.rotation = deckAndDiscardPile.transform.rotation;
+        card.transform.localScale = discardPileSize;
+        card.SetFacingUp(true);
         UpdateVisuals();
     }
 
@@ -180,6 +185,7 @@ public class CardManager : MonoBehaviour
 
         Card topCard = discardPile[discardPile.Count - 1];
         discardPile.RemoveAt(discardPile.Count - 1);
+        topCard.transform.localScale = cardInHandSize;
         UpdateVisuals();
         return topCard;
     }
@@ -195,6 +201,8 @@ public class CardManager : MonoBehaviour
 
             discardPile[discardPile.Count - 1].gameObject.SetActive(true);
         }
+
+        
 /*        if (deckTransform.GetComponent<SpriteRenderer>() != null)
         {
             deckTransform.GetComponent<SpriteRenderer>().enabled = deck.Count > 0;
@@ -223,5 +231,23 @@ public class CardManager : MonoBehaviour
             _ => 0
         };
         return rank * 4 + suitOffset;
+    }
+
+    public Sprite GetCardSprite(string rank, string suit)
+    {
+        // Format the file name based on the card naming convention
+        string cardFileName = $"{rank}_of_{suit.ToLower()}";
+        if (rank.Equals("Jack") || rank.Equals("King") || rank.Equals("Queen")) cardFileName += "2";
+
+        // Load the sprite from the Resources folder
+        Sprite cardSprite = Resources.Load<Sprite>($"Cards/{cardFileName}");
+
+        // Check if the sprite was found
+        if (cardSprite == null)
+        {
+            Debug.LogError($"Card sprite not found: {cardFileName}");
+        }
+
+        return cardSprite;
     }
 }
