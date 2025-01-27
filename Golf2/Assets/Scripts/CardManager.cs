@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class CardManager : MonoBehaviour
 {
     public GameObject cardPrefab;
+    public GameManager gameManager;
     public Transform deckAndDiscardPile;
     public Image deckImage;
     public Transform inDeckCardsParent; // Parent for the cards when their in the deck
@@ -29,11 +30,19 @@ public class CardManager : MonoBehaviour
         ShuffleDeck();
     }
 
+    private void Start()
+    {
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+    }
+
+    /// <summary>
+    /// Creates all 5
+    /// </summary>
     private void InitializeDeck()
     {
         string[] suits = {"clubs", "diamonds", "hearts", "spades"};
 
-        for (int value = 2; value <= 14; value++)
+        for (int value = 1; value <= 13; value++)
         {
             foreach (string suit in suits)
             {
@@ -48,7 +57,7 @@ public class CardManager : MonoBehaviour
                     // setting card with sprite
                     Sprite faceSprite = GetCardSprite(ValueToString(value), suit);
 
-                    newCard.SetCard(NormalizeValue(value), suit, faceSprite, cardBackSprite);
+                    newCard.SetCard(value, suit, faceSprite, cardBackSprite);
 
                     deck.Add(newCard);
                     newCardObj.SetActive(false);
@@ -61,12 +70,6 @@ public class CardManager : MonoBehaviour
     {
         // my ocd
         return $"{ValueToString(value)} of {suit}";
-    }
-
-    private int NormalizeValue(int val)
-    {
-        // Ace=1
-        return (val == 14) ? 1 : val;
     }
 
     private string ValueToString(int val)
@@ -134,7 +137,16 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    public void DrawAndDiscardCard(bool playerClicked = false)
+    public void OnDeckClick()
+    {
+        DrawAndDiscardCard(animate:true);
+    }
+
+    /// <summary>
+    /// Draws a card from the deck and discards it into the discard pile face-up
+    /// </summary>
+    /// <param name="playerClicked">Whether the player clicked the deck to do this or not (False if the program automatically called this method)</param>
+    public void DrawAndDiscardCard(bool playerClicked = false, bool animate = false, bool goToNextTurn = false)
     {
         if (deck.Count == 0)
         {
@@ -143,39 +155,48 @@ public class CardManager : MonoBehaviour
         }
         else if (deck.Count == 1) deckImage.gameObject.SetActive(false);
 
-        if (deckCardDrawn && playerClicked)
+        if (deckCardDrawn && playerClicked) // Deck has been drawn and is clicked again
         {
             Debug.Log("Deck card already drawn");
             return;
         }
         else
         {
-            SetDeckDrawable(!playerClicked);
+            SetDeckDrawable(!playerClicked); // Make the deck non-drawable if the player just drew from it
         }
 
 
-        Card drawnCard = deck[0];
+        Card drawnCard = deck[0]; // Take top card
         deck.RemoveAt(0);
         drawnCard.SetFacingUp(true);
-        DiscardCard(drawnCard);
+
+        if (animate) StartCoroutine(gameManager.MoveToPosition(drawnCard.gameObject, discardTransform.position, 0.3f, goToNextTurn));
+
+        DiscardCard(drawnCard, !animate); // Add card into discard pile
     }
 
+    /// <summary>
+    /// Sets the "canDrawDeck" variable and makes the deck sprite fade if the deck is not drawable
+    /// </summary>
+    /// <param name="canDrawCard"></param>
     public void SetDeckDrawable(bool canDrawCard)
     {
         deckCardDrawn = !canDrawCard;
         deckImage.color = new Color(1, 1, 1, deckCardDrawn ? 0.3f : 1f);
     }
 
-    public void DiscardCard(Card card)
+    public void DiscardCard(Card card, bool movePos = true)
     {
         if (card == null) return;
         discardPile.Add(card);
 
         card.transform.SetParent(discardedCardsParent); // Set the parent of the card to the discard pile
-        card.transform.position = discardTransform.position; // Place it where the discard pile is
+        if (movePos) card.transform.position = discardTransform.position; // Place it where the discard pile is
+
         card.transform.rotation = deckAndDiscardPile.transform.rotation;
         card.transform.localScale = discardPileSize;
         card.SetFacingUp(true);
+
         UpdateVisuals();
     }
 
@@ -202,37 +223,14 @@ public class CardManager : MonoBehaviour
             discardPile[discardPile.Count - 1].gameObject.SetActive(true);
         }
 
-        
-/*        if (deckTransform.GetComponent<SpriteRenderer>() != null)
-        {
-            deckTransform.GetComponent<SpriteRenderer>().enabled = deck.Count > 0;
-        }
-
-        if (discardTransform.GetComponent<SpriteRenderer>() != null)
-        {
-            discardTransform.GetComponent<SpriteRenderer>().enabled = discardPile.Count > 0;
-            
-
-        }*/
-
     }
 
-    private int GetSpriteIndex(int value, string suit)
-    {
-        // just check the sprites/cards folder to understand!!!
-
-        int rank = value - 2; // 2->0, 3->1,..., 14 (Ace)->12
-        int suitOffset = suit switch
-        {
-            "clubs" => 0,
-            "diamonds" => 1,
-            "hearts" => 2,
-            "spades" => 3,
-            _ => 0
-        };
-        return rank * 4 + suitOffset;
-    }
-
+    /// <summary>
+    /// Finds the card's face-up sprite based on the rank and suit
+    /// </summary>
+    /// <param name="rank">The rank of the card</param>
+    /// <param name="suit">The suit of the card</param>
+    /// <returns>The sprite found</returns>
     public Sprite GetCardSprite(string rank, string suit)
     {
         // Format the file name based on the card naming convention

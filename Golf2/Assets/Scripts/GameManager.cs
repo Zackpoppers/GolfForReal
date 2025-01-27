@@ -12,17 +12,20 @@ public class GameManager : MonoBehaviour
     private CardManager cardManager;
 
     public int currentPlayerTurn;
-    private int globalTurnCount;
+    public int globalTurnCount;
     private int playerCount;
-    public GameObject camera;
+    public GameObject cameraObject;
     public GameObject deckAndDiscardPileParent;
     public bool rotating = false;
+    public bool switchingCards = false;
 
     public GameObject endGameScreen;
     public TextMeshProUGUI scoreText;
     public bool gameOver = false;
 
     private float cameraRotateDuration = 0.75f;
+    private const float _cardSwapDuration = 0.15f;
+    public float cardSwapDuration => _cardSwapDuration; // Getter for the cardSwapDuration
 
     void Start()
     {
@@ -30,8 +33,13 @@ public class GameManager : MonoBehaviour
         cardManager = GameObject.FindGameObjectWithTag("CardManager").GetComponent<CardManager>();
         GeneratePlayers(playerCount);
         cardManager.DrawAndDiscardCard();
+
     }
 
+    /// <summary>
+    /// Generates players that automatically start with cards and get set up for the game to begin
+    /// </summary>
+    /// <param name="amount">Amount of players to generate</param>
     public void GeneratePlayers(int amount)
     {
         playerManagers = new PlayerManager[amount];
@@ -44,7 +52,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Rotates camera and readies the game for the next players turn
+    /// </summary>
     public void NextTurn()
     {
         if (currentPlayerTurn == playerCount - 1) globalTurnCount++;
@@ -60,26 +70,94 @@ public class GameManager : MonoBehaviour
         if (!cardManager.deckCardDrawn && // Did not draw card
             !cardManager.discardSwitchedWithCardInHand) // Did not switch in-hand card with discarded card (They flipped a card without drawing)
         {
-            cardManager.DrawAndDiscardCard();
+            cardManager.DrawAndDiscardCard(animate:true, goToNextTurn:true);
         }
 
         cardManager.SetDeckDrawable(true);
         cardManager.discardSwitchedWithCardInHand = false;
 
+
+        if (!switchingCards) StartCoroutine(RotateOverTime(cameraRotateDuration));
+    }
+
+    /// <summary>
+    /// Swaps the position of two objects
+    /// </summary>
+    /// <param name="obj1">First object to swap positions with the other</param>
+    /// <param name="obj2">Second object to swap positions with the other</param>
+    /// <param name="duration">The length of time in seconds that the swap will take to finish after being started</param>
+    /// <returns></returns>
+    public IEnumerator SwapPositions(GameObject obj1, GameObject obj2, float duration)
+    {
+        switchingCards = true;
+        // Get the starting positions of both objects
+        Vector3 startPos1 = obj1.transform.position;
+        Vector3 startPos2 = obj2.transform.position;
+
+        float elapsedTime = 0f;
+
+        // Lerp the positions over the specified duration
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+
+            // Smoothly interpolate between the positions
+            obj1.transform.position = Vector3.Lerp(startPos1, startPos2, t);
+            obj2.transform.position = Vector3.Lerp(startPos2, startPos1, t);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Snap to final positions to ensure accuracy
+        obj1.transform.position = startPos2;
+        obj2.transform.position = startPos1;
+        switchingCards = false;
         StartCoroutine(RotateOverTime(cameraRotateDuration));
     }
 
+    /// <summary>
+    /// Moves an object to a specified position over a given duration.
+    /// </summary>
+    /// <param name="obj">The object to move</param>
+    /// <param name="targetPosition">The position to move the object to</param>
+    /// <param name="duration">The length of time in seconds that the movement will take to finish</param>
+    /// <returns></returns>
+    public IEnumerator MoveToPosition(GameObject obj, Vector3 targetPosition, float duration, bool nextTurn)
+    {
+        switchingCards = true;
+        // Get the starting position of the object
+        Vector3 startPosition = obj.transform.position;
+
+        float elapsedTime = 0f;
+
+        // Lerp the position over the specified duration
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+
+            // Smoothly interpolate between the start and target positions
+            obj.transform.position = Vector3.Lerp(startPosition, targetPosition, t);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Snap to the final position to ensure accuracy
+        obj.transform.position = targetPosition;
+        switchingCards = false;
+        if(nextTurn) StartCoroutine(RotateOverTime(cameraRotateDuration));
+    }
 
     // Generated by ChatGPT
     private IEnumerator RotateOverTime(float duration)
     {
         rotating = true;
         // The target rotation angle for the camera and the pile
-        int targetRotation = (int)camera.transform.rotation.eulerAngles.z + 90;
-        Debug.Log($"Rotating to {targetRotation} for player = {currentPlayerTurn} and global turn = {globalTurnCount}");
+        int targetRotation = (int)cameraObject.transform.rotation.eulerAngles.z + 90;
 
         // Start from the current rotation angles
-        float startCameraRotation = camera.transform.rotation.eulerAngles.z;
+        float startCameraRotation = cameraObject.transform.rotation.eulerAngles.z;
         float startPileRotation = deckAndDiscardPileParent.transform.rotation.eulerAngles.z;
 
         // Time passed during the rotation
@@ -91,7 +169,7 @@ public class GameManager : MonoBehaviour
             float t = elapsedTime / duration; // Normalized time (0 to 1)
 
             // Interpolate the rotation between the start and target values
-            camera.transform.rotation = Quaternion.Euler(0, 0, Mathf.Lerp(startCameraRotation, targetRotation, t));
+            cameraObject.transform.rotation = Quaternion.Euler(0, 0, Mathf.Lerp(startCameraRotation, targetRotation, t));
             deckAndDiscardPileParent.transform.rotation = Quaternion.Euler(0, 0, Mathf.Lerp(startPileRotation, targetRotation, t));
 
             // Increase the elapsed time
@@ -101,11 +179,14 @@ public class GameManager : MonoBehaviour
         }
 
         // Ensure the final rotation is exactly the target rotation
-        camera.transform.rotation = Quaternion.Euler(0, 0, targetRotation);
+        cameraObject.transform.rotation = Quaternion.Euler(0, 0, targetRotation);
         deckAndDiscardPileParent.transform.rotation = Quaternion.Euler(0, 0, targetRotation);
         rotating = false;
     }
 
+    /// <summary>
+    /// Calculates scores of each player, displays the end menu and changes "gameOver" to true
+    /// </summary>
     private void EndGame()
     {
         gameOver = true;

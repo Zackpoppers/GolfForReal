@@ -71,6 +71,10 @@ public class Card : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Checks if the card is in a player's hand
+    /// </summary>
+    /// <returns>If the card is in a player's hand</returns>
     private bool AttachedToPlayer()
     {
         GameObject parent = gameObject.transform.parent.parent.gameObject; // parent -> canvas, parent of parent -> player

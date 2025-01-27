@@ -1733,6 +1733,7 @@ MonoBehaviour:
   camera: {fileID: 210347507}
   deckAndDiscardPileParent: {fileID: 1795915668}
   rotating: 0
+  switchingCards: 0
   endGameScreen: {fileID: 924295510}
   scoreText: {fileID: 1789882105}
   gameOver: 0
