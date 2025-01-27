@@ -17,12 +17,12 @@ this is a digitalized versions of a card game called golf
     8. The player with the lowest score wins
 
 - Scoring 
-    Aces are worth MINUS one point
-    Twos are worth minus two points
-    Cards 3–10 are worth their face value
-    Jacks and Queens are worth 10 points
-    Kings are worth zero points
-    A pair of equal cards in the same column is worth zero points for that column
+    -Aces are worth MINUS one point
+    -Twos are worth minus two points
+    -Cards 3–10 are worth their face value
+    -Jacks and Queens are worth 10 points
+    -Kings are worth zero points
+    -A pair of equal cards in the same column is worth zero points for that column
 
 | Card | Points/Value |
 | --- | --- |
