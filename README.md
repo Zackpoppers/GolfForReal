@@ -9,7 +9,7 @@ this is a digitalized versions of a card game called golf
 - Gameplay
     1. Each player receives 6 cards face down 
     2. A card from the remaining deck is placed face up to start the discard pile
-    3. Each Player Gets to view only 2 cards in their hand
+    3. Each Player Gets to view only 2 cards in their hand In THE BEGINNING of the round (try to memorize the cards since they will be face down after your turn over)
     4. Players take turns drawing a card from the draw pile or discard pile 
     5. Players can swap the drawn card for one of their cards or discard it 
     6. The round ends when a player has all their cards face up 
