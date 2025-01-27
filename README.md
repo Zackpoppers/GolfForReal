@@ -24,7 +24,7 @@ this is a digitalized versions of a card game called golf
     5. Kings are worth zero points
     6. A pair of equal cards in the same column is worth zero points for that column
 
--| Card | Points/Value |
+| Card | Points/Value |
 | --- | --- |
 | Twos | -2 |
 | Ace | -1 |
