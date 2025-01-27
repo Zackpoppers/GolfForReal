@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class CardManager : MonoBehaviour
 {
     public GameObject cardPrefab;
-    public GameManager gameManager;
+    private GameManager gameManager;
     public Transform deckAndDiscardPile;
     public Image deckImage;
     public Transform inDeckCardsParent; // Parent for the cards when their in the deck
@@ -139,7 +139,7 @@ public class CardManager : MonoBehaviour
 
     public void OnDeckClick()
     {
-        DrawAndDiscardCard(animate:true);
+        DrawAndDiscardCard(animate:true, playerClicked:true);
     }
 
     /// <summary>
