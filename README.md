@@ -28,8 +28,10 @@ this is a digitalized versions of a card game called golf
 | --- | --- |
 | Twos | -2 |
 | Ace | -1 |
+| Kings | 0 |
 | 3-10 | Face value of the card |
 | Jacks & Queen | 10 |
+
 
 ### Requirements
 - Unity 6000.0.34f1
