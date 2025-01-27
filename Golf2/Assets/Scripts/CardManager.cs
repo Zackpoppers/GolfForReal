@@ -1,13 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CardManager : MonoBehaviour
 {
     public GameObject cardPrefab;
-    public Transform deckTransform;
+    public Transform deckAndDiscardPile;
+    public Image deckImage;
     public Transform inDeckCardsParent; // Parent for the cards when their in the deck
     public Transform discardedCardsParent; // Parent for the cards when their in the discard pile
     public Transform discardTransform;
+
+    public bool deckCardDrawn = false;
 
     public List<Card> deck = new List<Card>();
     private List<Card> discardPile = new List<Card>();
@@ -26,7 +30,7 @@ public class CardManager : MonoBehaviour
         {
             for (int value = 1; value <= 13; value++)
             {
-                GameObject newCardObj = Instantiate(cardPrefab, deckTransform.position, Quaternion.identity);
+                GameObject newCardObj = Instantiate(cardPrefab, inDeckCardsParent.position, Quaternion.identity);
                 Card newCard = newCardObj.GetComponent<Card>();
                 if (newCard != null)
                 {
@@ -92,19 +96,35 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    public void DrawAndDiscardCard()
+    public void DrawAndDiscardCard(bool playerClicked = false)
     {
         if (deck.Count == 0)
         {
             Debug.Log("No cards in the deck to draw!");
             return;
         }
-        else if (deck.Count == 1) deckTransform.gameObject.SetActive(false);
+        else if (deck.Count == 1) deckImage.gameObject.SetActive(false);
+
+        if (deckCardDrawn && playerClicked)
+        {
+            Debug.Log("Deck card already drawn");
+            return;
+        }
+        else
+        {
+            SetDeckDrawable(playerClicked);
+        }
 
 
         Card drawnCard = deck[0];
         deck.RemoveAt(0);
         DiscardCard(drawnCard);
+    }
+
+    public void SetDeckDrawable(bool canDrawCard)
+    {
+        deckCardDrawn = canDrawCard;
+        deckImage.color = new Color(1, 1, 1, deckCardDrawn ? 0.3f : 1.0f);
     }
 
     public void DiscardCard(Card card)
@@ -114,7 +134,7 @@ public class CardManager : MonoBehaviour
 
         card.transform.SetParent(discardedCardsParent); // Set the parent of the card to the discard pile
         card.transform.position = discardTransform.position; // Place it where the discard pile is
-        card.transform.rotation = Quaternion.identity;
+        card.transform.rotation = deckAndDiscardPile.transform.rotation;
         UpdateVisuals();
     }
 
