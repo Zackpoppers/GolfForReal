@@ -12,6 +12,9 @@ public class CardManager : MonoBehaviour
     public List<Card> deck = new List<Card>();
     private List<Card> discardPile = new List<Card>();
 
+    public List<Sprite> cardSprites;
+    public Sprite cardBackSprite;
+
     private void Awake()
     {
         InitializeDeck();
@@ -20,25 +23,58 @@ public class CardManager : MonoBehaviour
 
     private void InitializeDeck()
     {
-        string[] suits = { "Hearts", "Diamonds", "Clubs", "Spades" };
+        string[] suits = { "clubs", "diamonds", "hearts", "spades" };
 
-        foreach (string suit in suits)
+        for (int value = 2; value <= 14; value++)
         {
-            for (int value = 1; value <= 13; value++)
+            foreach (string suit in suits)
             {
                 GameObject newCardObj = Instantiate(cardPrefab, deckTransform.position, Quaternion.identity);
                 Card newCard = newCardObj.GetComponent<Card>();
+
                 if (newCard != null)
                 {
-                    newCardObj.name = $"{CardValueToString(value)} of {suit}";
+                    newCardObj.name = GetCardName(value, suit);
                     newCardObj.transform.SetParent(inDeckCardsParent);
-                    newCard.SetCard(value, suit);
+
+                    // setting card with sprite
+                    int spriteIndex = GetSpriteIndex(value, suit);
+                    Sprite faceSprite = (spriteIndex >= 0 && spriteIndex < cardSprites.Count)
+                        ? cardSprites[spriteIndex]
+                        : null;
+
+                    newCard.SetCard(NormalizeValue(value), suit, faceSprite, cardBackSprite);
+
                     deck.Add(newCard);
                     newCardObj.SetActive(false);
                 }
             }
         }
     }
+
+    private string GetCardName(int value, string suit)
+    {
+        // my ocd
+        return $"{ValueToString(value)} of {suit}";
+    }
+
+    private int NormalizeValue(int val)
+    {
+        // Ace=1
+        return (val == 14) ? 1 : val;
+    }
+
+    private string ValueToString(int val)
+    {
+        if (val >= 2 && val <= 10) return val.ToString();
+        if (val == 11) return "Jack";
+        if (val == 12) return "Queen";
+        if (val == 13) return "King";
+        if (val == 1 || val == 14) return "Ace";
+        return null;
+    }
+
+
 
     /// <summary>
     /// Changes the card value to its string format (11 -> "Jack", 12 -> "Queen")
@@ -151,5 +187,21 @@ public class CardManager : MonoBehaviour
 
         }*/
 
+    }
+
+    private int GetSpriteIndex(int value, string suit)
+    {
+        // just check the sprites/cards folder to understand!!!
+
+        int rank = value - 2; // 2->0, 3->1,..., 14 (Ace)->12
+        int suitOffset = suit switch
+        {
+            "clubs" => 0,
+            "diamonds" => 1,
+            "hearts" => 2,
+            "spades" => 3,
+            _ => 0
+        };
+        return rank * 4 + suitOffset;
     }
 }

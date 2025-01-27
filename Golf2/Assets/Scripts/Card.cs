@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Card : MonoBehaviour
 {
@@ -9,45 +10,32 @@ public class Card : MonoBehaviour
     public string suit;
     public bool isFaceUp = true;
 
-    private TextMeshPro textComponent;
+    public Image cardImage;
+    private Sprite faceSprite;
+    private Sprite backSprite;
 
-    private void Awake()
-    {
-        textComponent = GetComponentInChildren<TextMeshPro>();
-        UpdateCardVisual();
-    }
-
-    public void SetCard(int cardValue, string cardSuit)
+    public void SetCard(int cardValue, string cardSuit, Sprite newFaceSprite, Sprite newBackSprite)
     {
         value = cardValue;
         suit = cardSuit;
+        faceSprite = newFaceSprite;
+        backSprite = newBackSprite;
         isFaceUp = true;
-        textComponent.gameObject.SetActive(isFaceUp);
         UpdateCardVisual();
     }
 
     private void UpdateCardVisual()
     {
-        if (textComponent != null)
+        if (cardImage != null)
         {
-            string valueText = value switch
-            {
-                0 => "Joker",
-                1 => "Ace",
-                11 => "Jack",
-                12 => "Queen",
-                13 => "King",
-                _ => value.ToString()
-            };
-
-            textComponent.text = isFaceUp ? $"{valueText}\n{suit[0]}{suit[1]}{suit[2]}" : "";
+            cardImage.sprite = isFaceUp ? faceSprite : backSprite;
         }
     }
 
     public void Flip()
     {
         isFaceUp = !isFaceUp;
-        textComponent.gameObject.SetActive(isFaceUp);
+        UpdateCardVisual();
     }
 
     public void OnClick()

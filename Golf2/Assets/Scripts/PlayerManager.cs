@@ -57,13 +57,13 @@ public class PlayerManager : MonoBehaviour
 
     private void ReplaceCard(Card oldCard)
     {
-        if (cardManager == null) return;
         RotateHand(false);
         int index = playerHand.IndexOf(oldCard);
 
         Card newCard = cardManager.TakeTopCard(); // Gets the last item in discardPile list
-        playerHand[index] = newCard;
+        if (newCard == null) return;
 
+        playerHand[index] = newCard;
         newCard.transform.position = oldCard.transform.position;
         newCard.transform.SetParent(gameObject.transform.GetChild(0)); // Set card to the CANVAS of the player object
 
