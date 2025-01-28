@@ -319,6 +319,8 @@ MonoBehaviour:
   value: 0
   suit: 
   isFaceUp: 0
+  flipSoundClip: {fileID: 8300000, guid: 2c5eccab89b6a7344b33cfed6528adc5, type: 3}
+  drawSoundClip: {fileID: 8300000, guid: ce2378bb17bb2f845a02284bdd98eb4a, type: 3}
   cardImage: {fileID: 974554836894371264}
 --- !u!222 &6916646298823405080
 CanvasRenderer:

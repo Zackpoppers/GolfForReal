@@ -12,6 +12,9 @@ public class Card : MonoBehaviour
     public string suit;
     public bool isFaceUp = true;
 
+    [SerializeField] private AudioClip flipSoundClip;
+    [SerializeField] private AudioClip drawSoundClip;
+
     public Image cardImage;
     private Sprite faceSprite;
     private Sprite backSprite;
@@ -32,6 +35,8 @@ public class Card : MonoBehaviour
     {
         isFaceUp = !isFaceUp;
         UpdateCardVisual();
+
+        
     }
 
     public void SetFacingUp(bool facingUp)
@@ -51,6 +56,7 @@ public class Card : MonoBehaviour
             {
                 playerManager.OnCardClicked(this);
             }
+            SoundFXManager.instance.PlaySoundFXClip(drawSoundClip, transform, 1.0f);
         }
     }
 
@@ -68,6 +74,7 @@ public class Card : MonoBehaviour
             {
                 playerManager.OnCardClicked(this, true);
             }
+            SoundFXManager.instance.PlaySoundFXClip(flipSoundClip, transform, 1.0f);
         }
     }
 
@@ -80,9 +87,5 @@ public class Card : MonoBehaviour
         GameObject parent = gameObject.transform.parent.parent.gameObject; // parent -> canvas, parent of parent -> player
         return parent.name.Contains("Player");
     }
-
-
-
-
 
 }

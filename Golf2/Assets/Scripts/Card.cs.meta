@@ -1,2 +1,13 @@
 fileFormatVersion: 2
 guid: e0e88c74f6db006469b7427c7948b364
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - flipSoundClip: {fileID: 8300000, guid: 2c5eccab89b6a7344b33cfed6528adc5, type: 3}
+  - cardImage: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

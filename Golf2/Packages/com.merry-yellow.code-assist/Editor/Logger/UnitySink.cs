@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 //using Meryel.UnityCodeAssist.Serilog;
 //using Meryel.UnityCodeAssist.Serilog.Core;
 //using Meryel.UnityCodeAssist.Serilog.Events;
@@ -10,7 +9,6 @@ using Meryel.Serilog.Events;
 
 
 #pragma warning disable IDE0005
-using Serilog = Meryel.Serilog;
 #pragma warning restore IDE0005
 
 
