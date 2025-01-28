@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
         //dont need lol, just use static
 
         playerCount = MainMenu.PlayerCount;
+
         cardManager = GameObject.FindGameObjectWithTag("CardManager").GetComponent<CardManager>();
         GeneratePlayers(playerCount);
         cardManager.DrawAndDiscardCard();

@@ -301,11 +301,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardPrefab: {fileID: 6787268818870426942, guid: 22c461b53c6c8c241a685913472470a6, type: 3}
-  deckTransform: {fileID: 533980659}
+  deckAndDiscardPile: {fileID: 1681492638}
+  deckImage: {fileID: 1768127820}
   inDeckCardsParent: {fileID: 741344166}
   discardedCardsParent: {fileID: 593395417}
   discardTransform: {fileID: 2139187114}
+  deckCardDrawn: 0
+  discardSwitchedWithCardInHand: 0
   deck: []
+  cardBackSprite: {fileID: 5189691121816951081, guid: 019ada5c8a13a044da913d8b619929a1, type: 3}
 --- !u!1 &460235648
 GameObject:
   m_ObjectHideFlags: 0
@@ -882,7 +886,7 @@ RectTransform:
   m_GameObject: {fileID: 1768127817}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.2, y: 1.2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 533980659}
@@ -1121,6 +1125,14 @@ MonoBehaviour:
   playerPrefab: {fileID: 8223568495148352218, guid: 3201bc83392389f448086984aa3f24ac, type: 3}
   playerParent: {fileID: 460235649}
   currentPlayerTurn: 0
+  globalTurnCount: 0
+  cameraObject: {fileID: 0}
+  deckAndDiscardPileParent: {fileID: 1681492636}
+  rotating: 0
+  switchingCards: 0
+  endGameScreen: {fileID: 0}
+  scoreText: {fileID: 0}
+  gameOver: 0
 --- !u!4 &1967386789
 Transform:
   m_ObjectHideFlags: 0
