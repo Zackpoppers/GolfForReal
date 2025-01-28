@@ -22,7 +22,7 @@ this is a digitalized versions of a card game called golf
     3. Cards 3–10 are worth their face value
     4. Jacks and Queens are worth 10 points
     5. Kings are worth zero points
-    6. A pair of equal cards in the same column is worth zero points for that column
+    6. A pair of equal cards in the same column/row is worth zero points for that column
 
 | Card | Points/Value |
 | --- | --- |
