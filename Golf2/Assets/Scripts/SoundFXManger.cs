@@ -4,7 +4,7 @@ public class SoundFXManager : MonoBehaviour
 {
     public static SoundFXManager instance;
 
-    [SerializeField] private AudioSource soundFXObject;
+    [SerializeField] private GameObject soundFXObject;
 
     public void Awake()
     {
@@ -23,7 +23,7 @@ public class SoundFXManager : MonoBehaviour
     public void PlaySoundFXClip(AudioClip audioClip, Transform spawnTransform, float volume)
     {
         // Instantiate a new AudioSource at the spawn location
-        AudioSource audioSource = Instantiate(soundFXObject, spawnTransform.position, Quaternion.identity);
+        AudioSource audioSource = Instantiate(soundFXObject, spawnTransform.position, Quaternion.identity).GetComponent<AudioSource>();
 
         // Assign the audio clip
         audioSource.clip = audioClip;
