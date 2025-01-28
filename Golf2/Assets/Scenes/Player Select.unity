@@ -478,7 +478,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 680615644}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
-        m_MethodName: Player_Button
+        m_MethodName: One_Player_Button
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -839,7 +839,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 680615644}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
-        m_MethodName: Player_Button
+        m_MethodName: Two_Player_Button
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1074,7 +1074,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 680615644}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
-        m_MethodName: Player_Button
+        m_MethodName: Three_Player_Button
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1479,7 +1479,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 680615644}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
-        m_MethodName: Player_Button
+        m_MethodName: Four_Player_Button
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

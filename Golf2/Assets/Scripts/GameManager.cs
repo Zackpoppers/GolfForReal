@@ -34,8 +34,9 @@ public class GameManager : MonoBehaviour
         /*        Settings settings = GameObject.FindGameObjectWithTag("Settings").GetComponent<Settings>();
                 playerCount = settings.playerCount;*/
         // For ben :) ^^^^
+        //dont need lol, just use static
 
-        playerCount = 3;
+        playerCount = MainMenu.PlayerCount;
         cardManager = GameObject.FindGameObjectWithTag("CardManager").GetComponent<CardManager>();
         GeneratePlayers(playerCount);
         cardManager.DrawAndDiscardCard();
